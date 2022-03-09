@@ -1,12 +1,18 @@
-import { Window } from "@progress/kendo-react-dialogs";
+import { Window, WindowActionsEvent } from "@progress/kendo-react-dialogs";
 import React from 'react';
 
 import { Splitter, SplitterOnChangeEvent } from "@progress/kendo-react-layout";
 
+
+
+interface Props {
+  onClose(event: WindowActionsEvent) : void
+}
+
 interface AppState {
     panes: Array<any>;
   }
-class WindowTest extends React.Component{
+class WindowTest extends React.Component<Props,{}> {
     
   
     state: AppState = {
@@ -21,7 +27,7 @@ class WindowTest extends React.Component{
 
     render(){
         return (
-        <Window title='WindowTest'>
+        <Window title='WindowTest' onClose={this.props.onClose}>
         <Splitter
           style={{ height: '100%' }}
           panes={this.state.panes}

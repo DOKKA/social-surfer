@@ -26,7 +26,7 @@ count: 0
 
   render(){
     let asdf = this.state.windows.map((win)=>{
-      return (<Windowtest key={win}>{win}</Windowtest>);
+      return (<Windowtest key={win} onClose={()=> this.closeWindow(win) } >{win}</Windowtest>);
     });
     return (
       <div className="outer">
@@ -42,6 +42,23 @@ count: 0
     </div>
     );
   }
+
+  closeWindow = (win: string) =>{
+    let allWindows = this.state.windows;
+    let windows:Array<string> = [];
+    allWindows.forEach(element => {
+      if(element === win){
+
+      } else {
+        windows.push(element);
+      }
+    });
+    console.log('closing '+win)
+    this.setState((state) =>({
+      windows: windows
+    }));
+  };
+
 
   increment = (amt: number) => {
     // like this
