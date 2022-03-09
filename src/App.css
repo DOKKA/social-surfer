@@ -1,0 +1,12 @@
+@import '@progress/kendo-theme-default/dist/all.css';
+
+.outer {
+  height: 100vh;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+}
