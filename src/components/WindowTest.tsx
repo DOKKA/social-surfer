@@ -1,35 +1,31 @@
 import { Window, WindowActionsEvent } from "@progress/kendo-react-dialogs";
-import React from 'react';
+import React from "react";
 
 import { Splitter, SplitterOnChangeEvent } from "@progress/kendo-react-layout";
 
-
-
 interface Props {
-  onClose(event: WindowActionsEvent) : void
+  onClose(event: WindowActionsEvent): void;
 }
 
 interface AppState {
-    panes: Array<any>;
-  }
-class WindowTest extends React.Component<Props,{}> {
-    
-  
-    state: AppState = {
-        panes: [{ size: "20%", collapsible: true }, {}],
-      };
-    
-      onChange = (event: SplitterOnChangeEvent) => {
-        this.setState({
-          panes: event.newState,
-        });
-      };
+  panes: Array<any>;
+}
+class WindowTest extends React.Component<Props, {}> {
+  state: AppState = {
+    panes: [{ size: "20%", collapsible: true }, {}],
+  };
 
-    render(){
-        return (
-        <Window title='WindowTest' onClose={this.props.onClose}>
+  onChange = (event: SplitterOnChangeEvent) => {
+    this.setState({
+      panes: event.newState,
+    });
+  };
+
+  render() {
+    return (
+      <Window title="WindowTest" onClose={this.props.onClose}>
         <Splitter
-          style={{ height: '100%' }}
+          style={{ height: "100%" }}
           panes={this.state.panes}
           onChange={this.onChange}
         >
@@ -39,9 +35,9 @@ class WindowTest extends React.Component<Props,{}> {
           </div>
           <h3>Main content</h3>
         </Splitter>
-        </Window>
-            );
-    }
+      </Window>
+    );
+  }
 }
 
 export default WindowTest;
