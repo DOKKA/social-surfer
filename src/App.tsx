@@ -1,9 +1,8 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { Window } from "@progress/kendo-react-dialogs";
 import { Menu } from "@progress/kendo-react-layout";
 import { Button } from "@progress/kendo-react-buttons";
+import Windowtest from './components/WindowTest';
 type MyState = {
   count: number;
   windows: Array<string>;
@@ -27,7 +26,7 @@ count: 0
 
   render(){
     let asdf = this.state.windows.map((win)=>{
-      return (<Window key={win}>{win}</Window>);
+      return (<Windowtest key={win}>{win}</Windowtest>);
     });
     return (
       <div className="outer">
