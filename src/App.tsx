@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { Menu } from "@progress/kendo-react-layout";
+import { Menu, MenuSelectEvent } from "@progress/kendo-react-layout";
 import { Button } from "@progress/kendo-react-buttons";
 import Windowtest from "./components/WindowTest";
 type MyState = {
@@ -9,6 +9,10 @@ type MyState = {
 };
 
 let items = [
+  {
+    text: "Window Test",
+    data: "window-test"
+  },
   {
     text: "Item1",
     items: [
@@ -23,9 +27,7 @@ let items = [
     text: "Item2",
     items: [{ text: "Item2.1" }, { text: "Item2.2" }, { text: "Item2.3" }],
   },
-  {
-    text: "Item3",
-  },
+
 ];
 
 class App extends React.Component {
@@ -44,16 +46,9 @@ class App extends React.Component {
     });
     return (
       <div className="outer">
-        <Menu items={items} style={{ backgroundColor: "#f0f0f0" }} />
+        <Menu items={items} style={{ backgroundColor: "#f0f0f0" }} onSelect={this.handleSelect} />
 
         <div className="main">
-          <Button
-            style={{ margin: "20px" }}
-            themeColor={"primary"}
-            onClick={() => this.increment(1)}
-          >
-            Button {this.state.count}
-          </Button>
           {asdf}
         </div>
         <footer style={{ textAlign: "center" }}>
@@ -62,6 +57,12 @@ class App extends React.Component {
       </div>
     );
   }
+
+  handleSelect = (e: MenuSelectEvent) => {
+    if(e.item.data ==='window-test'){
+      this.increment(1);
+    }
+  };
 
   closeWindow = (win: string) => {
     let allWindows = this.state.windows;

@@ -23,7 +23,7 @@ class WindowTest extends React.Component<Props, {}> {
 
   render() {
     return (
-      <Window title="WindowTest" onClose={this.props.onClose}>
+      <Window title="Window Test" onClose={this.props.onClose}>
         <Splitter
           style={{ height: "100%" }}
           panes={this.state.panes}
