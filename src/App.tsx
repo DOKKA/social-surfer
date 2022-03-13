@@ -1,39 +1,18 @@
 import React from "react";
 import "./App.css";
-import { Menu, MenuSelectEvent } from "@progress/kendo-react-layout";
+import { Menu, MenuItem, MenuSelectEvent } from "@progress/kendo-react-layout";
 import { Button } from "@progress/kendo-react-buttons";
 import Windowtest from "./components/WindowTest";
+import LicensePlate from "./util/LicensePlate";
 type MyState = {
-  count: number,
   windows: Array<string>,
 };
 
-let items = [
-  {
-    text: "Window Test",
-    data: "window-test"
-  },
-  {
-    text: "Item1",
-    items: [
-      { text: "Item1.1" },
-      {
-        text: "Item1.2",
-        items: [{ text: "Item1.2.1" }, { text: "Item1.2.2" }],
-      },
-    ],
-  },
-  {
-    text: "Item2",
-    items: [{ text: "Item2.1" }, { text: "Item2.2" }, { text: "Item2.3" }],
-  },
 
-];
 
 class App extends React.Component {
   state: MyState = {
-    windows: [],
-    count: 0,
+    windows: []
   };
 
   render() {
@@ -46,13 +25,17 @@ class App extends React.Component {
     });
     return (
       <div className="outer">
-        <Menu items={items} style={{ backgroundColor: "#f0f0f0" }} onSelect={this.handleSelect} />
-
+        <Menu  style={{ backgroundColor: "#f0f0f0" }} onSelect={this.handleSelect}>
+      <MenuItem text="Menu Tests">
+        <MenuItem text="Child item" />
+      </MenuItem>
+      <MenuItem text="Window Test" data="window-test" />
+    </Menu>
         <div className="main">
           {asdf}
         </div>
         <footer style={{ textAlign: "center" }}>
-          Social Surfer ©2022 Created by DOKKA
+          Social Surfer ©2022 Created by DOKKA {LicensePlate()}
         </footer>
       </div>
     );
@@ -60,9 +43,10 @@ class App extends React.Component {
 
   handleSelect = (e: MenuSelectEvent) => {
     if(e.item.data ==='window-test'){
-      this.increment(1);
+      this.openWindow();
     }
   };
+
 
   closeWindow = (win: string) => {
     let allWindows = this.state.windows;
@@ -79,16 +63,17 @@ class App extends React.Component {
     }));
   };
 
-  increment = (amt: number) => {
+  openWindow = () => {
     // like this
     this.setState((state) => ({
-      count: this.state.count + amt,
       windows: [
         ...this.state.windows,
-        "new value " + this.state.count.toString(),
+        LicensePlate(),
       ],
     }));
   };
+
+
 }
 
 export default App;
