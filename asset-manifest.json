@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/social-surfer/static/css/main.dbd281a7.css",
+    "main.js": "/social-surfer/static/js/main.791096e5.js",
+    "static/js/787.e45df923.chunk.js": "/social-surfer/static/js/787.e45df923.chunk.js",
+    "index.html": "/social-surfer/index.html",
+    "main.dbd281a7.css.map": "/social-surfer/static/css/main.dbd281a7.css.map",
+    "main.791096e5.js.map": "/social-surfer/static/js/main.791096e5.js.map",
+    "787.e45df923.chunk.js.map": "/social-surfer/static/js/787.e45df923.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.dbd281a7.css",
+    "static/js/main.791096e5.js"
+  ]
+}
