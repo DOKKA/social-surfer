@@ -9,15 +9,23 @@ interface Props {
 
 interface AppState {
   panes: Array<any>;
+  innerPanes: Array<any>;
 }
 class FediverseExplorer extends React.Component<Props, {}> {
   state: AppState = {
     panes: [{ size: "20%", collapsible: true }, {}],
+    innerPanes: [{}, {}],
   };
 
   onChange = (event: SplitterOnChangeEvent) => {
     this.setState({
       panes: event.newState,
+    });
+  };
+
+  onChangeInner = (event: SplitterOnChangeEvent) => {
+    this.setState({
+      innerPanes: event.newState,
     });
   };
 
@@ -29,12 +37,21 @@ class FediverseExplorer extends React.Component<Props, {}> {
           panes={this.state.panes}
           onChange={this.onChange}
         >
-            <div className="pane-content">
-                <p>sidebar</p>
+          <div className="pane-content">
+            <p>sidebar</p>
+          </div>
+          <Splitter
+            panes={this.state.innerPanes}
+            orientation={"vertical"}
+            onChange={this.onChangeInner}
+          >
+            <div>
+              <p>content1</p>
             </div>
-            <div className="pane-content">
-                <p>main content</p>
+            <div>
+              <p>content2</p>
             </div>
+          </Splitter>
         </Splitter>
       </Window>
     );
