@@ -7,6 +7,8 @@
     "@progress/kendo-licensing": "^1.2.2",
     "@progress/kendo-react-buttons": "^5.1.0",
     "@progress/kendo-react-dialogs": "^5.1.0",
+    "@progress/kendo-react-inputs": "^5.1.0",
+    "@progress/kendo-react-labels": "^5.1.0",
     "@progress/kendo-react-layout": "^5.1.0",
     "@progress/kendo-theme-default": "^5.2.0",
     "@testing-library/jest-dom": "^5.16.2",
