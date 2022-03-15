@@ -31,7 +31,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
 
   render() {
     return (
-      <Window title="Fediverse Explorer" onClose={this.props.onClose}>
+      <Window title="Fediverse Explorer" onClose={this.props.onClose} initialHeight={768} initialWidth={1024}>
         <Splitter
           style={{ height: "100%" }}
           panes={this.state.panes}
