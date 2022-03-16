@@ -1,19 +1,24 @@
 import { Window, WindowActionsEvent } from "@progress/kendo-react-dialogs";
 import React from "react";
-import { Input } from "@progress/kendo-react-inputs";
+import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { Button } from "@progress/kendo-react-buttons";
 import { Splitter, SplitterOnChangeEvent } from "@progress/kendo-react-layout";
+import WebFingerService from "../../service/WebfingerService";
 
 interface Props {
   onClose(event: WindowActionsEvent): void;
 }
 
 interface AppState {
+  address: string;
+  profileLink: string;
   panes: Array<any>;
   innerPanes: Array<any>;
 }
 class FediverseExplorer extends React.Component<Props, {}> {
   state: AppState = {
+    address: 'kevin@friendgroup.social',
+    profileLink: '',
     panes: [{ size: "20%", collapsible: true }, {}],
     innerPanes: [{}, {}],
   };
@@ -30,15 +35,30 @@ class FediverseExplorer extends React.Component<Props, {}> {
     });
   };
 
+  onSearch = async () => {
+    WebFingerService.getDomainURL(this.state.address);
+    let profileLink = await WebFingerService.getProfileURL(this.state.address);
+    this.setState({
+      profileLink: profileLink
+    });
+  }
+
+  onAddressChange = (event: InputChangeEvent) => {
+    this.setState({
+      address: event.target.value
+    });
+  }
+
   render() {
     return (
       <Window title="Fediverse Explorer" onClose={this.props.onClose} initialHeight={768} initialWidth={1024}>
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-
           <div style={{ margin: '5px 0', display: 'flex' }}>
-            <Input style={{ width: '50%' }} />
-            <Button style={{ margin: '0 5px' }}>Search</Button>
-            <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'row-reverse', alignItems: 'center' }}><span>User not found</span></div>
+            <Input style={{ width: '50%' }} value={this.state.address} onChange={this.onAddressChange} />
+            <Button style={{ margin: '0 5px' }} onClick={this.onSearch}>Search</Button>
+            <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'row-reverse', alignItems: 'center' }}>
+              <a href={this.state.profileLink} target="_blank" rel="noopener noreferrer">{this.state.profileLink}</a>
+            </div>
           </div>
           <Splitter
             style={{ flexGrow: 1 }}
