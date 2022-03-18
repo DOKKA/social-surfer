@@ -47,7 +47,20 @@ export default class WebFingerService{
         let domain = arrAddress[1];
         let response = await fetch('https://'+domain+'/api/v1/instance',{
              headers:{
-                 Accept: `application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"`
+                 Accept: 'application/activity+json'
+             }
+        });
+        let asdf = await response.json();
+        console.log(asdf);
+        return asdf;
+
+    }
+
+    static async getProfileAll(profileURL: string){
+
+        let response = await fetch(profileURL,{
+             headers:{
+                 Accept: 'application/activity+json'
              }
         });
         let asdf = await response.json();

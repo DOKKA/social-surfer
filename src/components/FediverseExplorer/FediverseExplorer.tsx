@@ -36,8 +36,9 @@ class FediverseExplorer extends React.Component<Props, {}> {
   };
 
   onSearch = async () => {
-    WebFingerService.getDomainURL(this.state.address);
+    //WebFingerService.getDomainURL(this.state.address);
     let profileLink = await WebFingerService.getProfileURL(this.state.address);
+    WebFingerService.getProfileAll(profileLink);
     this.setState({
       profileLink: profileLink
     });
