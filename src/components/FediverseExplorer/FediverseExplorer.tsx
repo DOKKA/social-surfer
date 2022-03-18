@@ -4,6 +4,7 @@ import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { Button } from "@progress/kendo-react-buttons";
 import { Splitter, SplitterOnChangeEvent } from "@progress/kendo-react-layout";
 import WebFingerService from "../../service/WebfingerService";
+import BasicInfoService from "../../service/BasicInfoService";
 
 interface Props {
   onClose(event: WindowActionsEvent): void;
@@ -36,11 +37,11 @@ class FediverseExplorer extends React.Component<Props, {}> {
   };
 
   onSearch = async () => {
-    //WebFingerService.getDomainURL(this.state.address);
-    let profileLink = await WebFingerService.getProfileURL(this.state.address);
-    WebFingerService.getInstance(this.state.address);
+    //let profileLink = await WebFingerService.getProfileURL(this.state.address);
+    let basicInfo = new BasicInfoService(this.state.address);
+    await basicInfo.getBasicInfo();
     this.setState({
-      profileLink: profileLink
+      profileLink: basicInfo.profileURL
     });
   }
 

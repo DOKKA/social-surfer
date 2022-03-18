@@ -40,29 +40,4 @@ export default class WebFingerService{
 
     }
 
-    static async getInstance(address: string){
-        let arrAddress = address.split('@');
-        arrAddress = arrAddress.filter( (a)=> a.length > 0);
-
-        let domain = arrAddress[1];
-        let response = await fetch('https://'+domain+'/api/v1/instance');
-        let asdf = await response.json();
-        console.log(asdf);
-        return asdf;
-
-    }
-
-    static async getProfileAll(profileURL: string){
-
-        let response = await fetch(profileURL,{
-             headers:{
-                 Accept: 'application/activity+json'
-             }
-        });
-        let asdf = await response.json();
-        console.log(asdf);
-        return asdf;
-
-    }
-
 }
