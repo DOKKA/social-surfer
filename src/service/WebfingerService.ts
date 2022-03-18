@@ -40,16 +40,12 @@ export default class WebFingerService{
 
     }
 
-    static async getDomainURL(address: string){
+    static async getInstance(address: string){
         let arrAddress = address.split('@');
         arrAddress = arrAddress.filter( (a)=> a.length > 0);
 
         let domain = arrAddress[1];
-        let response = await fetch('https://'+domain+'/api/v1/instance',{
-             headers:{
-                 Accept: 'application/activity+json'
-             }
-        });
+        let response = await fetch('https://'+domain+'/api/v1/instance');
         let asdf = await response.json();
         console.log(asdf);
         return asdf;
