@@ -21,11 +21,41 @@ interface NodeInfo {
     links: NodeInfoLink[];
 }
 
+ interface Software {
+    name: string;
+    version: string;
+}
+
+ interface Services {
+    inbound: string[];
+    outbound: string[];
+}
+
+ interface Usage {
+}
+
+ interface Metadata {
+    nodeName: string;
+    explicitContent: boolean;
+}
+
+ interface NodeInfoJSON {
+    version: string;
+    software: Software;
+    protocols: string[];
+    services: Services;
+    usage: Usage;
+    openRegistrations: boolean;
+    metadata: Metadata;
+}
+
 export default class BasicInfoService{
     address: string;
     domain: string;
     profileURL?: string;
     nodeInfoURL?: string;
+    software?: string;
+    softwareVersion?: string;
 
     constructor(address:string){
         let arrAddress = address.trim().split('@');
@@ -35,7 +65,13 @@ export default class BasicInfoService{
     }
 
     async getBasicInfo(){
-        await this.getProfileURL();
+        try{
+            await this.getProfileURL();
+            await this.getNodeInfoURL();
+            await this.getNodeInfoJSON();
+        } catch(e){
+            console.error(e);
+        }
     }
 
     async getProfileURL(){
@@ -60,6 +96,22 @@ export default class BasicInfoService{
             this.nodeInfoURL = links[0].href;
         }
     }
+
+    async getNodeInfoJSON(){
+        console.log(this.nodeInfoURL)
+        let url = new URL(this.nodeInfoURL!);
+        let request1 = await fetch('https://api.allorigins.win/get?url='+encodeURIComponent( url.toString()));
+        let asdf = await request1.json();
+        let json2 = asdf.contents;
+        let json3: NodeInfoJSON = JSON.parse( json2);
+        this.software = json3.software.name;
+        this.softwareVersion = json3.software.name;
+        // let json1: NodeInfoJSON = await request1.json();
+        // this.software = json1.software.name;
+        // this.softwareVersion = json1.software.version;
+         console.log(this.software)
+    }
+
 
 
 
