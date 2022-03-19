@@ -1,4 +1,4 @@
-interface Link {
+interface WebfingerLink {
     rel: string;
     href: string;
     type: string;
@@ -8,14 +8,24 @@ interface Link {
  interface Webfinger {
     subject: string;
     aliases: string[];
-    links: Link[];
+    links: WebfingerLink[];
 }
 
+
+interface NodeInfoLink {
+    href: string;
+    rel: string;
+}
+
+interface NodeInfo {
+    links: NodeInfoLink[];
+}
 
 export default class BasicInfoService{
     address: string;
     domain: string;
     profileURL?: string;
+    nodeInfoURL?: string;
 
     constructor(address:string){
         let arrAddress = address.trim().split('@');
@@ -38,6 +48,16 @@ export default class BasicInfoService{
         
         if(links.length > 0){
             this.profileURL = links.reverse()[0].href;
+        }
+    }
+
+    async getNodeInfoURL(){
+        let url = new URL('https://'+this.domain+'/.well-known/nodeinfo');
+        let request1 = await fetch(url.toString());
+        let json1: NodeInfo = await request1.json();
+        let links = json1.links.filter(l => l.rel.includes('2.0'))
+        if(links.length > 0){
+            this.nodeInfoURL = links[0].href;
         }
     }
 
