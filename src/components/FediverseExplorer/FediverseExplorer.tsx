@@ -3,8 +3,8 @@ import React from "react";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { Button } from "@progress/kendo-react-buttons";
 import { Splitter, SplitterOnChangeEvent } from "@progress/kendo-react-layout";
-import WebFingerService from "../../service/WebfingerService";
-import BasicInfoService from "../../service/BasicInfoService";
+import WebfingerService from "../../service/WebfingerService";
+import ProfileService from "../../service/ProfileService";
 
 interface Props {
   onClose(event: WindowActionsEvent): void;
@@ -37,9 +37,14 @@ class FediverseExplorer extends React.Component<Props, {}> {
   };
 
   onSearch = async () => {
-    //let profileLink = await WebFingerService.getProfileURL(this.state.address);
-    let basicInfo = new BasicInfoService(this.state.address);
+    let basicInfo = new WebfingerService(this.state.address);
     await basicInfo.getBasicInfo();
+    if(basicInfo.profileURL !== null && basicInfo.profileURL !== undefined){
+      let profileService = new ProfileService(basicInfo.profileURL)
+      await profileService.getProfileJSON();
+
+    }
+    
     this.setState({
       profileLink: basicInfo.profileURL
     });
