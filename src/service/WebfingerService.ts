@@ -89,16 +89,17 @@ export default class WebfingerService{
 
     async getNodeInfoURL(){
         let url = new URL('https://'+this.domain+'/.well-known/nodeinfo');
-        let request1 = await fetch(url.toString());
-        let json1: NodeInfo = await request1.json();
-        let links = json1.links.filter(l => l.rel.includes('2.0'))
+        let request1 = await fetch('https://api.allorigins.win/get?url='+encodeURIComponent( url.toString()));
+        let asdf = await request1.json();
+        let json2 = asdf.contents;
+        let json3:NodeInfo = JSON.parse(json2);
+        let links = json3.links.filter(l => l.rel.includes('2.0'))
         if(links.length > 0){
             this.nodeInfoURL = links[0].href;
         }
     }
 
     async getNodeInfoJSON(){
-        console.log(this.nodeInfoURL)
         let url = new URL(this.nodeInfoURL!);
         let request1 = await fetch('https://api.allorigins.win/get?url='+encodeURIComponent( url.toString()));
         let asdf = await request1.json();

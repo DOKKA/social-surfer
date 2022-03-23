@@ -4,7 +4,9 @@ import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { Button } from "@progress/kendo-react-buttons";
 import { Splitter, SplitterOnChangeEvent } from "@progress/kendo-react-layout";
 import WebfingerService from "../../service/WebfingerService";
-import ProfileService from "../../service/ProfileService";
+import FriendicaProfileService from "../../service/FriendicaProfileService";
+import MastodonProfileService from "../../service/MastodonProfileService";
+import PleromaProfileService from "../../service/PleromaProfileService";
 
 interface Props {
   onClose(event: WindowActionsEvent): void;
@@ -40,8 +42,18 @@ class FediverseExplorer extends React.Component<Props, {}> {
     let basicInfo = new WebfingerService(this.state.address);
     await basicInfo.getBasicInfo();
     if(basicInfo.profileURL !== null && basicInfo.profileURL !== undefined){
-      let profileService = new ProfileService(basicInfo.profileURL)
-      await profileService.getProfileJSON();
+      if(basicInfo.software === 'friendica'){
+        let profileService = new FriendicaProfileService(basicInfo.profileURL);
+        await profileService.getProfileJSON();
+      } else if(basicInfo.software === 'mastodon'){
+        let profileService = new MastodonProfileService(basicInfo.profileURL);
+        await profileService.getProfileJSON();
+      } else if(basicInfo.software === 'pleroma'){
+        let profileService = new PleromaProfileService(basicInfo.profileURL);
+        await profileService.getProfileJSON();
+      }
+      //generic profile service?
+      //diaspora profile service?
 
     }
     
