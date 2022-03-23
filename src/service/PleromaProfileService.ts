@@ -1,3 +1,4 @@
+import {ProfileInterface} from '../types/common';
 
  interface ProfileJSON {
     "@context": [string, string, Context]
@@ -65,11 +66,13 @@
 
 
 
-export default class PleromaProfileService{
+export default class PleromaProfileService implements ProfileInterface{
 
     profileURL:string;
+    image: string;
     constructor(profileURL:string){
         this.profileURL = profileURL;
+        this.image = '';
     }
 
     async getProfileJSON(){
@@ -80,5 +83,6 @@ export default class PleromaProfileService{
         });
         let asdf:ProfileJSON = await request.json()
         console.log(asdf);
+        this.image = asdf.icon.url;
     }
 }

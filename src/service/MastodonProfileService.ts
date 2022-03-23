@@ -1,3 +1,5 @@
+import {ProfileInterface} from '../types/common';
+
 interface PublicKey {
   id: string;
   owner: string;
@@ -53,10 +55,12 @@ interface ProfileJSON {
   image: Image;
 }
 
-export default class MastodonProfileService {
+export default class MastodonProfileService implements ProfileInterface{
   profileURL: string;
+  image: string;
   constructor(profileURL: string) {
     this.profileURL = profileURL;
+    this.image = '';
   }
 
   async getProfileJSON() {
@@ -67,5 +71,6 @@ export default class MastodonProfileService {
     });
     let asdf:ProfileJSON = await request.json();
     console.log(asdf);
+    this.image = asdf.icon.url;
   }
 }

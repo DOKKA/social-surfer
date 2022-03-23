@@ -1,3 +1,5 @@
+import {ProfileInterface} from '../types/common';
+
 interface VcardHasAddress {
   "@type": string;
   "vcard:country-name": string;
@@ -56,10 +58,12 @@ interface ProfileJSON {
   generator: Generator;
 }
 
-export default class FriendicaProfileService {
+export default class FriendicaProfileService implements ProfileInterface {
   profileURL: string;
+  image: string;
   constructor(profileURL: string) {
     this.profileURL = profileURL;
+    this.image = '';
   }
 
   async getProfileJSON() {
@@ -69,5 +73,6 @@ export default class FriendicaProfileService {
       },
     });
     let asdf: ProfileJSON = await request.json();
+    this.image = asdf.icon.url;
   }
 }

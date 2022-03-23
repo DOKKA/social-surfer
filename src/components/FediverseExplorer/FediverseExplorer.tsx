@@ -7,6 +7,7 @@ import WebfingerService from "../../service/WebfingerService";
 import FriendicaProfileService from "../../service/FriendicaProfileService";
 import MastodonProfileService from "../../service/MastodonProfileService";
 import PleromaProfileService from "../../service/PleromaProfileService";
+import {ProfileInterface} from '../../types/common';
 
 interface Props {
   onClose(event: WindowActionsEvent): void;
@@ -42,6 +43,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
     let basicInfo = new WebfingerService(this.state.address);
     await basicInfo.getBasicInfo();
     if(basicInfo.profileURL !== null && basicInfo.profileURL !== undefined){
+      let profileService:ProfileInterface | null = null;
       if(basicInfo.software === 'friendica'){
         let profileService = new FriendicaProfileService(basicInfo.profileURL);
         await profileService.getProfileJSON();
