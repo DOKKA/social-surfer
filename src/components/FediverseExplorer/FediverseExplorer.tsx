@@ -19,6 +19,7 @@ interface AppState {
   panes: Array<any>;
   innerPanes: Array<any>;
   profileImage: string|null;
+  summary: string|null;
 }
 class FediverseExplorer extends React.Component<Props, {}> {
   state: AppState = {
@@ -26,7 +27,8 @@ class FediverseExplorer extends React.Component<Props, {}> {
     profileLink: '',
     panes: [{ size: "20%", collapsible: true }, {}],
     innerPanes: [{}, {}],
-    profileImage: null
+    profileImage: null,
+    summary: null,
   };
 
   onChange = (event: SplitterOnChangeEvent) => {
@@ -43,9 +45,9 @@ class FediverseExplorer extends React.Component<Props, {}> {
 
   onSearch = async () => {
     let basicInfo = new WebfingerService(this.state.address);
+    let profileService:ProfileInterface | null = null;
     await basicInfo.getBasicInfo();
     if(basicInfo.profileURL !== null && basicInfo.profileURL !== undefined){
-      let profileService:ProfileInterface | null = null;
       if(basicInfo.software === 'friendica'){
         profileService = new FriendicaProfileService(basicInfo.profileURL);
         await profileService.getProfileJSON();
@@ -56,9 +58,6 @@ class FediverseExplorer extends React.Component<Props, {}> {
         profileService = new PleromaProfileService(basicInfo.profileURL);
         await profileService.getProfileJSON();
       }
-      this.setState({
-        profileImage: profileService?.image
-      });
       
       //generic profile service?
       //diaspora profile service?
@@ -66,7 +65,9 @@ class FediverseExplorer extends React.Component<Props, {}> {
     }
     
     this.setState({
-      profileLink: basicInfo.profileURL
+      profileLink: basicInfo.profileURL,
+      profileImage: profileService?.image,
+      summary: profileService?.summary
     });
   }
 
@@ -93,8 +94,9 @@ class FediverseExplorer extends React.Component<Props, {}> {
             panes={this.state.panes}
             onChange={this.onChange}
           >
-            <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+            <div style={{height: '100%', display: 'flex', flexDirection: 'column', margin: '0 5px'}}>
               {this.state.profileImage ? <img src={this.state.profileImage} alt={this.state.address}/>: <br/>}
+              {this.state.summary ? <div dangerouslySetInnerHTML={{__html: this.state.summary}} /> : <br/> } 
             </div>
             <Splitter
               panes={this.state.innerPanes}

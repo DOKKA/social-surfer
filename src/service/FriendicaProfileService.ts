@@ -61,9 +61,11 @@ interface ProfileJSON {
 export default class FriendicaProfileService implements ProfileInterface {
   profileURL: string;
   image: string|null;
+  summary: string | null;
   constructor(profileURL: string) {
     this.profileURL = profileURL;
     this.image = null;
+    this.summary = null;
   }
 
   async getProfileJSON() {
@@ -74,5 +76,6 @@ export default class FriendicaProfileService implements ProfileInterface {
     });
     let asdf: ProfileJSON = await request.json();
     this.image = asdf.icon.url;
+    this.summary = asdf.summary;
   }
 }
