@@ -69,10 +69,10 @@ import {ProfileInterface} from '../types/common';
 export default class PleromaProfileService implements ProfileInterface{
 
     profileURL:string;
-    image: string;
+    image: string|null;
     constructor(profileURL:string){
         this.profileURL = profileURL;
-        this.image = '';
+        this.image = null;
     }
 
     async getProfileJSON(){

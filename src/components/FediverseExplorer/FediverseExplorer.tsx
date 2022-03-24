@@ -18,6 +18,7 @@ interface AppState {
   profileLink: string;
   panes: Array<any>;
   innerPanes: Array<any>;
+  profileImage: string|null;
 }
 class FediverseExplorer extends React.Component<Props, {}> {
   state: AppState = {
@@ -25,6 +26,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
     profileLink: '',
     panes: [{ size: "20%", collapsible: true }, {}],
     innerPanes: [{}, {}],
+    profileImage: null
   };
 
   onChange = (event: SplitterOnChangeEvent) => {
@@ -45,15 +47,19 @@ class FediverseExplorer extends React.Component<Props, {}> {
     if(basicInfo.profileURL !== null && basicInfo.profileURL !== undefined){
       let profileService:ProfileInterface | null = null;
       if(basicInfo.software === 'friendica'){
-        let profileService = new FriendicaProfileService(basicInfo.profileURL);
+        profileService = new FriendicaProfileService(basicInfo.profileURL);
         await profileService.getProfileJSON();
       } else if(basicInfo.software === 'mastodon'){
-        let profileService = new MastodonProfileService(basicInfo.profileURL);
+        profileService = new MastodonProfileService(basicInfo.profileURL);
         await profileService.getProfileJSON();
       } else if(basicInfo.software === 'pleroma'){
-        let profileService = new PleromaProfileService(basicInfo.profileURL);
+        profileService = new PleromaProfileService(basicInfo.profileURL);
         await profileService.getProfileJSON();
       }
+      this.setState({
+        profileImage: profileService?.image
+      });
+      
       //generic profile service?
       //diaspora profile service?
 
@@ -71,6 +77,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
   }
 
   render() {
+    
     return (
       <Window title="Fediverse Explorer" onClose={this.props.onClose} initialHeight={768} initialWidth={1024}>
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -86,8 +93,8 @@ class FediverseExplorer extends React.Component<Props, {}> {
             panes={this.state.panes}
             onChange={this.onChange}
           >
-            <div className="pane-content">
-              <p>sidebar</p>
+            <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+              {this.state.profileImage ? <img src={this.state.profileImage} alt={this.state.address}/>: <br/>}
             </div>
             <Splitter
               panes={this.state.innerPanes}
