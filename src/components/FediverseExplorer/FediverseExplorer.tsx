@@ -8,6 +8,7 @@ import FriendicaProfileService from "../../service/FriendicaProfileService";
 import MastodonProfileService from "../../service/MastodonProfileService";
 import PleromaProfileService from "../../service/PleromaProfileService";
 import {ProfileInterface} from '../../types/common';
+import cors_fetch from "../../util/CorsFetch";
 
 interface Props {
   onClose(event: WindowActionsEvent): void;
@@ -59,6 +60,8 @@ class FediverseExplorer extends React.Component<Props, {}> {
         await profileService.getProfileJSON();
       }
       
+      let x =await cors_fetch('https://mastodon.technology/users/ashfurrow/followers?page=1',{'Accept': 'application/activity+json'})
+      console.log(x);
       //generic profile service?
       //diaspora profile service?
 
