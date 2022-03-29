@@ -1,3 +1,4 @@
+import cors_fetch from "../util/CorsFetch";
 
 
 
@@ -6,22 +7,20 @@
 export default class ProfileService{
 
     profileURL:string;
+    image: string|null;
+    summary: string | null;
     constructor(profileURL:string){
         this.profileURL = profileURL;
+        this.image = null;
+        this.summary = null;
     }
 
-    //you will need a different profileservice for
-    //friendica
-    //mastodon
-    //pleroma
-    //generic
     async getProfileJSON(){
-        let request = await fetch(this.profileURL,{
-            headers:{
-                'Accept': 'application/activity+json'
-            }
+        let json = await cors_fetch(this.profileURL,{
+            'Accept': 'application/activity+json'
         });
-        let asdf = await request.json()
-        console.log(asdf);
+
+        this.image = json.icon.url;
+        this.summary = json.summary;
     }
 }

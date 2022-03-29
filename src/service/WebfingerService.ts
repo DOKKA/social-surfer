@@ -1,3 +1,5 @@
+import cors_fetch from "../util/CorsFetch";
+
 interface WebfingerLink {
     rel: string;
     href: string;
@@ -88,25 +90,20 @@ export default class WebfingerService{
     }
 
     async getNodeInfoURL(){
-        let url = new URL('https://'+this.domain+'/.well-known/nodeinfo');
-        let request1 = await fetch('https://api.allorigins.win/get?url='+encodeURIComponent( url.toString()));
-        let asdf = await request1.json();
-        let json2 = asdf.contents;
-        let json3:NodeInfo = JSON.parse(json2);
-        let links = json3.links.filter(l => l.rel.includes('2.0'))
+        let json:NodeInfo = await cors_fetch('https://'+this.domain+'/.well-known/nodeinfo');
+        let links = json.links.filter(l => l.rel.includes('2.0'));
         if(links.length > 0){
             this.nodeInfoURL = links[0].href;
         }
     }
 
     async getNodeInfoJSON(){
-        let url = new URL(this.nodeInfoURL!);
-        let request1 = await fetch('https://api.allorigins.win/get?url='+encodeURIComponent( url.toString()));
-        let asdf = await request1.json();
-        let json2 = asdf.contents;
-        let json3: NodeInfoJSON = JSON.parse( json2);
-        this.software = json3.software.name;
-        this.softwareVersion = json3.software.name;
+        if(this.nodeInfoURL){
+            let json:NodeInfoJSON = await cors_fetch(this.nodeInfoURL);
+            this.software = json.software.name;
+            this.softwareVersion = json.software.version;
+        }
+        
     }
 
 

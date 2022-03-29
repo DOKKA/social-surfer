@@ -4,10 +4,7 @@ import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { Button } from "@progress/kendo-react-buttons";
 import { Splitter, SplitterOnChangeEvent } from "@progress/kendo-react-layout";
 import WebfingerService from "../../service/WebfingerService";
-import FriendicaProfileService from "../../service/FriendicaProfileService";
-import MastodonProfileService from "../../service/MastodonProfileService";
-import PleromaProfileService from "../../service/PleromaProfileService";
-import {ProfileInterface} from '../../types/common';
+import ProfileService from "../../service/ProfileService";
 import cors_fetch from "../../util/CorsFetch";
 
 interface Props {
@@ -46,32 +43,17 @@ class FediverseExplorer extends React.Component<Props, {}> {
 
   onSearch = async () => {
     let basicInfo = new WebfingerService(this.state.address);
-    let profileService:ProfileInterface | null = null;
     await basicInfo.getBasicInfo();
     if(basicInfo.profileURL !== null && basicInfo.profileURL !== undefined){
-      if(basicInfo.software === 'friendica'){
-        profileService = new FriendicaProfileService(basicInfo.profileURL);
-        await profileService.getProfileJSON();
-      } else if(basicInfo.software === 'mastodon'){
-        profileService = new MastodonProfileService(basicInfo.profileURL);
-        await profileService.getProfileJSON();
-      } else if(basicInfo.software === 'pleroma'){
-        profileService = new PleromaProfileService(basicInfo.profileURL);
-        await profileService.getProfileJSON();
-      }
-      
-      let x =await cors_fetch('https://mastodon.technology/users/ashfurrow/followers?page=1',{'Accept': 'application/activity+json'})
-      console.log(x);
-      //generic profile service?
-      //diaspora profile service?
-
+      let profileService = new ProfileService(basicInfo.profileURL);
+      await profileService.getProfileJSON();
+      this.setState({
+        profileLink: basicInfo.profileURL,
+        profileImage: profileService?.image,
+        summary: profileService?.summary
+      });
     }
     
-    this.setState({
-      profileLink: basicInfo.profileURL,
-      profileImage: profileService?.image,
-      summary: profileService?.summary
-    });
   }
 
   onAddressChange = (event: InputChangeEvent) => {
