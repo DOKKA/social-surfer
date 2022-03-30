@@ -80,8 +80,7 @@ export default class WebfingerService{
         let url = new URL('https://'+this.domain+'/.well-known/webfinger')
         url.search =new URLSearchParams({resource: "acct:" + this.address}).toString();
         
-        let request = await fetch(url.toString());
-        let json: Webfinger = await request.json();
+        let json:Webfinger = await cors_fetch(url.toString());
         let links = json.links.filter(l => l.rel === 'self' || l.rel.includes('webfinger.net/rel/profile-page'));
         
         if(links.length > 0){

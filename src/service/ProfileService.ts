@@ -13,6 +13,7 @@ export default class ProfileService{
     following: string | null;
     inbox: string | null;
     outbox: string | null;
+    name: string|null;
     constructor(profileURL:string){
         this.profileURL = profileURL;
         this.image = null;
@@ -21,6 +22,7 @@ export default class ProfileService{
         this.following = null;
         this.inbox = null;
         this.outbox = null;
+        this.name = null;
     }
 
     async getProfileJSON(){
@@ -34,5 +36,6 @@ export default class ProfileService{
         this.following = json.following;
         this.inbox = json.inbox;
         this.outbox = json.outbox;
+        this.name = json.name || json.preferredUsername;
     }
 }

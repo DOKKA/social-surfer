@@ -18,6 +18,7 @@ interface AppState {
   innerPanes: Array<any>;
   profileImage: string|null;
   summary: string|null;
+  name: string|null;
 }
 class FediverseExplorer extends React.Component<Props, {}> {
   state: AppState = {
@@ -27,6 +28,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
     innerPanes: [{}, {}],
     profileImage: null,
     summary: null,
+    name: null
   };
 
   onChange = (event: SplitterOnChangeEvent) => {
@@ -50,7 +52,8 @@ class FediverseExplorer extends React.Component<Props, {}> {
       this.setState({
         profileLink: basicInfo.profileURL,
         profileImage: profileService?.image,
-        summary: profileService?.summary
+        summary: profileService?.summary,
+        name: profileService?.name
       });
     }
     
@@ -63,9 +66,14 @@ class FediverseExplorer extends React.Component<Props, {}> {
   }
 
   render() {
+
+    let title = "Fediverse Explorer";
+    if(this.state.name){
+      title = title + " - "+this.state.name;
+    }
     
     return (
-      <Window title="Fediverse Explorer" onClose={this.props.onClose} initialHeight={768} initialWidth={1024}>
+      <Window title={title} onClose={this.props.onClose} initialHeight={768} initialWidth={1024}>
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
           <div style={{ margin: '5px 0', display: 'flex' }}>
             <Input style={{ width: '50%' }} value={this.state.address} onChange={this.onAddressChange} />
