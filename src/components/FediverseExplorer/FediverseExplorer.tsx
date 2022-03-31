@@ -55,6 +55,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
         summary: profileService?.summary,
         name: profileService?.name
       });
+      profileService.getOutbox();
     }
     
   }
