@@ -5,7 +5,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Splitter, SplitterOnChangeEvent } from "@progress/kendo-react-layout";
 import WebfingerService from "../../service/WebfingerService";
 import ProfileService from "../../service/ProfileService";
-import cors_fetch from "../../util/CorsFetch";
+import OutboxService from "../../service/OutboxService";
 
 interface Props {
   onClose(event: WindowActionsEvent): void;
@@ -55,7 +55,10 @@ class FediverseExplorer extends React.Component<Props, {}> {
         summary: profileService?.summary,
         name: profileService?.name
       });
-      profileService.getOutbox();
+      if(profileService.outbox !== null && basicInfo.software !== null){
+        let outboxService  = new OutboxService(profileService.outbox, basicInfo.software);
+        await outboxService.getOutbox();
+      }
     }
     
   }

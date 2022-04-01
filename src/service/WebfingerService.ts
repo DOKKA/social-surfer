@@ -56,7 +56,7 @@ export default class WebfingerService{
     domain: string;
     profileURL?: string;
     nodeInfoURL?: string;
-    software?: string;
+    software: string | null;
     softwareVersion?: string;
 
     constructor(address:string){
@@ -64,6 +64,7 @@ export default class WebfingerService{
         arrAddress = arrAddress.filter( (a)=> a.length > 0);
         this.domain = arrAddress[1];
         this.address = arrAddress.join('@');
+        this.software = null;
     }
 
     async getBasicInfo(){

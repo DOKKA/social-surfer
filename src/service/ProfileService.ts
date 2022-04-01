@@ -40,31 +40,4 @@ export default class ProfileService {
     this.name = json.name || json.preferredUsername;
   }
 
-  async getOutbox() {
-    if (this.outbox === null || this.currentOutboxPage === null) {
-      await this.getOutboxJSON();
-      await this.getOutboxPage();
-    } else {
-      await this.getOutboxPage();
-    }
-  }
-
-  async getOutboxJSON() {
-    if (this.outbox !== null) {
-      let json = await cors_fetch(this.outbox, {
-        Accept: "application/activity+json",
-      });
-      this.currentOutboxPage = json.first;
-    }
-  }
-
-  async getOutboxPage() {
-    if (this.currentOutboxPage !== null) {
-      let json = await cors_fetch(this.currentOutboxPage, {
-        Accept: "application/activity+json",
-      });
-      this.currentOutboxPage = json.next;
-      this.outboxItems = json.orderedItems;
-    }
-  }
 }
