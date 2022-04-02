@@ -107,7 +107,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
               orientation={"vertical"}
               onChange={this.onChangeInner}
             >
-              <Grid  data={this.state.processedOutboxItems}>
+              <Grid style={{height: '400px'}} data={this.state.processedOutboxItems}>
                 <GridColumn field="contentText" title="Text" />
                 <GridColumn field="published" title="Published" width="100px" />
                 

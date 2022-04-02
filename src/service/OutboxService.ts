@@ -60,10 +60,11 @@ processOutboxItems(){
         id: item.id
       }
     } else {
+      let content = item.object.content || '';
       return {
         published: item.published,
-        contentText: item.object.content.replace(/<\/?[^>]+(>|$)/g, ""),
-        content: item.object.content,
+        contentText: content.replace(/<\/?[^>]+(>|$)/g, ""),
+        content: content,
         inReplyTo: item.object.inReplyTo,
         id: item.object.id
       }
