@@ -3,9 +3,11 @@ import React from "react";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { Button } from "@progress/kendo-react-buttons";
 import { Splitter, SplitterOnChangeEvent } from "@progress/kendo-react-layout";
+import { Grid, GridColumn } from "@progress/kendo-react-grid";
 import WebfingerService from "../../service/WebfingerService";
 import ProfileService from "../../service/ProfileService";
 import OutboxService from "../../service/OutboxService";
+import { OutboxItem } from "../../types/Common";
 
 interface Props {
   onClose(event: WindowActionsEvent): void;
@@ -16,9 +18,10 @@ interface AppState {
   profileLink: string;
   panes: Array<any>;
   innerPanes: Array<any>;
-  profileImage: string|null;
-  summary: string|null;
-  name: string|null;
+  profileImage: string | null;
+  summary: string | null;
+  name: string | null;
+  processedOutboxItems: Array<OutboxItem>
 }
 class FediverseExplorer extends React.Component<Props, {}> {
   state: AppState = {
@@ -28,7 +31,8 @@ class FediverseExplorer extends React.Component<Props, {}> {
     innerPanes: [{}, {}],
     profileImage: null,
     summary: null,
-    name: null
+    name: null,
+    processedOutboxItems: []
   };
 
   onChange = (event: SplitterOnChangeEvent) => {
@@ -46,7 +50,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
   onSearch = async () => {
     let basicInfo = new WebfingerService(this.state.address);
     await basicInfo.getBasicInfo();
-    if(basicInfo.profileURL !== null && basicInfo.profileURL !== undefined){
+    if (basicInfo.profileURL !== null && basicInfo.profileURL !== undefined) {
       let profileService = new ProfileService(basicInfo.profileURL);
       await profileService.getProfileJSON();
       this.setState({
@@ -55,12 +59,15 @@ class FediverseExplorer extends React.Component<Props, {}> {
         summary: profileService?.summary,
         name: profileService?.name
       });
-      if(profileService.outbox !== null && basicInfo.software !== null){
-        let outboxService  = new OutboxService(profileService.outbox, basicInfo.software);
+      if (profileService.outbox !== null && basicInfo.software !== null) {
+        let outboxService = new OutboxService(profileService.outbox, basicInfo.software);
         await outboxService.getOutbox();
+        this.setState({
+          processedOutboxItems: outboxService.processedOutboxItems
+        })
       }
     }
-    
+
   }
 
   onAddressChange = (event: InputChangeEvent) => {
@@ -72,10 +79,10 @@ class FediverseExplorer extends React.Component<Props, {}> {
   render() {
 
     let title = "Fediverse Explorer";
-    if(this.state.name){
-      title = title + " - "+this.state.name;
+    if (this.state.name) {
+      title = title + " - " + this.state.name;
     }
-    
+
     return (
       <Window title={title} onClose={this.props.onClose} initialHeight={768} initialWidth={1024}>
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -91,18 +98,20 @@ class FediverseExplorer extends React.Component<Props, {}> {
             panes={this.state.panes}
             onChange={this.onChange}
           >
-            <div style={{height: '100%', display: 'flex', flexDirection: 'column', margin: '0 5px'}}>
-              {this.state.profileImage ? <img src={this.state.profileImage} alt={this.state.address}/>: <br/>}
-              {this.state.summary ? <div dangerouslySetInnerHTML={{__html: this.state.summary}} /> : <br/> } 
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column', margin: '0 5px' }}>
+              {this.state.profileImage ? <img src={this.state.profileImage} alt={this.state.address} /> : <br />}
+              {this.state.summary ? <div dangerouslySetInnerHTML={{ __html: this.state.summary }} /> : <br />}
             </div>
             <Splitter
               panes={this.state.innerPanes}
               orientation={"vertical"}
               onChange={this.onChangeInner}
             >
-              <div>
-                <p>content1</p>
-              </div>
+              <Grid  data={this.state.processedOutboxItems}>
+                <GridColumn field="contentText" title="Text" />
+                <GridColumn field="published" title="Published" width="100px" />
+                
+              </Grid>
               <div>
                 <p>content2</p>
               </div>
