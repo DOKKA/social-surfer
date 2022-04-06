@@ -1,6 +1,6 @@
 
 export interface OutboxItem {
-    published: Date;
+    published: string;
     contentText: string;
     content: string;
     inReplyTo: string;

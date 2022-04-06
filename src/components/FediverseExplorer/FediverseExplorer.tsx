@@ -10,6 +10,7 @@ import ProfileService from "../../service/ProfileService";
 import OutboxService from "../../service/OutboxService";
 import { OutboxItem } from "../../types/Common";
 
+
 interface Props {
   onClose(event: WindowActionsEvent): void;
 }

@@ -1,5 +1,6 @@
 import cors_fetch from "../util/CorsFetch";
 import { OutboxItem } from "../types/Common";
+import moment from "moment";
 
 export default class OutboxService {
 
@@ -53,7 +54,7 @@ processOutboxItems(){
   this.processedOutboxItems = this.outboxItems.map((item: any)=>{
     if(this.software ==='friendica'){
       return {
-        published: new Date(item.published),
+        published: moment(item.published).fromNow(),
         contentText: item.content.replace(/<\/?[^>]+(>|$)/g, ""),
         content: item.content,
         inReplyTo: item.inReplyTo,
@@ -62,7 +63,7 @@ processOutboxItems(){
     } else {
       let content = item.object.content || '';
       return {
-        published: new Date(item.published),
+        published: moment(item.published).fromNow(),
         contentText: content.replace(/<\/?[^>]+(>|$)/g, ""),
         content: content,
         inReplyTo: item.object.inReplyTo,
