@@ -53,7 +53,7 @@ processOutboxItems(){
   this.processedOutboxItems = this.outboxItems.map((item: any)=>{
     if(this.software ==='friendica'){
       return {
-        published: item.published,
+        published: new Date(item.published),
         contentText: item.content.replace(/<\/?[^>]+(>|$)/g, ""),
         content: item.content,
         inReplyTo: item.inReplyTo,
@@ -62,7 +62,7 @@ processOutboxItems(){
     } else {
       let content = item.object.content || '';
       return {
-        published: item.published,
+        published: new Date(item.published),
         contentText: content.replace(/<\/?[^>]+(>|$)/g, ""),
         content: content,
         inReplyTo: item.object.inReplyTo,

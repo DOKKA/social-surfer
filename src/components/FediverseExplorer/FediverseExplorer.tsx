@@ -1,3 +1,4 @@
+import "./FediverseExplorer.css";
 import { Window, WindowActionsEvent } from "@progress/kendo-react-dialogs";
 import React from "react";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
@@ -111,7 +112,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
             >
               <Grid style={{height: this.state.gridHeight}} data={this.state.processedOutboxItems}>
                 <GridColumn field="contentText" title="Text" />
-                <GridColumn field="published" title="Published" width="100px" />
+                <GridColumn field="published" title="Published" width="120px" />
                 
               </Grid>
               <div>
