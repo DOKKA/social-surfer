@@ -4,12 +4,12 @@ import React from "react";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { Button } from "@progress/kendo-react-buttons";
 import { Splitter, SplitterOnChangeEvent } from "@progress/kendo-react-layout";
-import { Grid, GridColumn } from "@progress/kendo-react-grid";
+import { getSelectedState, Grid, GridColumn, GridSelectionChangeEvent } from "@progress/kendo-react-grid";
 import WebfingerService from "../../service/WebfingerService";
 import ProfileService from "../../service/ProfileService";
 import OutboxService from "../../service/OutboxService";
 import { OutboxItem } from "../../types/Common";
-
+import { getter } from "@progress/kendo-react-common";
 
 interface Props {
   onClose(event: WindowActionsEvent): void;
@@ -24,8 +24,12 @@ interface AppState {
   profileImage: string | null;
   summary: string | null;
   name: string | null;
-  processedOutboxItems: Array<OutboxItem>
+  processedOutboxItems: Array<OutboxItem>;
+  selectedState: {
+    [id: string]: boolean | number[];
+  };
 }
+const idGetter = getter('id');
 class FediverseExplorer extends React.Component<Props, {}> {
   state: AppState = {
     address: 'kevin@friendgroup.social',
@@ -36,7 +40,8 @@ class FediverseExplorer extends React.Component<Props, {}> {
     profileImage: null,
     summary: null,
     name: null,
-    processedOutboxItems: []
+    processedOutboxItems: [],
+    selectedState: {},
   };
 
   onChange = (event: SplitterOnChangeEvent) => {
@@ -74,6 +79,15 @@ class FediverseExplorer extends React.Component<Props, {}> {
     }
   }
 
+
+  onSelectionChange = (event: GridSelectionChangeEvent) => {
+    const selectedState = getSelectedState({
+      event,
+      selectedState: this.state.selectedState,
+      dataItemKey: 'id',
+    });
+    this.setState({ selectedState });
+  };
   onAddressChange = (event: InputChangeEvent) => {
     this.setState({
       address: event.target.value
@@ -111,7 +125,16 @@ class FediverseExplorer extends React.Component<Props, {}> {
               orientation={"vertical"}
               onChange={this.onChangeInner}
             >
-              <Grid style={{height: this.state.gridHeight}} data={this.state.processedOutboxItems}>
+              <Grid 
+              style={{height: this.state.gridHeight}} 
+              data={this.state.processedOutboxItems.map((item) => ({
+                ...item,
+                selected: this.state.selectedState[idGetter(item)],
+              }))}
+              selectable={{mode: 'single'}}
+              selectedField={"selected"}
+              onSelectionChange={this.onSelectionChange}
+              >
                 <GridColumn field="contentText" title="Text" />
                 <GridColumn field="published" title="Published" width="120px" />
                 

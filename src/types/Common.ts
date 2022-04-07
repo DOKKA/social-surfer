@@ -5,4 +5,5 @@ export interface OutboxItem {
     content: string;
     inReplyTo: string;
     id: string;
+    selected: boolean;
 }
