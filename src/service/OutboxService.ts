@@ -67,11 +67,13 @@ processOutboxItems(){
         contentText: content.replace(/<\/?[^>]+(>|$)/g, ""),
         content: content,
         inReplyTo: item.object.inReplyTo,
-        id: item.object.id
+        id: item.object.id || item.object
       }
     }
+  }).filter((item:OutboxItem)=>{    
+    return item.inReplyTo === null || item.inReplyTo === undefined
   });
-  console.log(this.processedOutboxItems);
+
 }
 
 }

@@ -24,6 +24,7 @@ interface AppState {
   profileImage: string | null;
   summary: string | null;
   name: string | null;
+  content: string|null;
   processedOutboxItems: Array<OutboxItem>;
   selectedState: {
     [id: string]: boolean | number[];
@@ -42,6 +43,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
     name: null,
     processedOutboxItems: [],
     selectedState: {},
+    content: null
   };
 
   onChange = (event: SplitterOnChangeEvent) => {
@@ -74,7 +76,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
         await outboxService.getOutbox();
         this.setState({
           processedOutboxItems: outboxService.processedOutboxItems
-        })
+        });
       }
     }
   }
@@ -86,8 +88,26 @@ class FediverseExplorer extends React.Component<Props, {}> {
       selectedState: this.state.selectedState,
       dataItemKey: 'id',
     });
-    this.setState({ selectedState });
+    let theKey = Object.keys( selectedState)[0];
+    let theValue = this.getValue(theKey);
+    console.log(theValue);
+    this.setState({ 
+      selectedState: selectedState,
+      content: theValue?.content 
+    });
   };
+
+  getValue = (id: string) =>{
+    let matches = this.state.processedOutboxItems.filter( (item)=>{
+      return id === item.id;
+    });
+    if(matches.length > 0){
+      return matches[0];
+    } else {
+      return null;
+    }
+  }
+
   onAddressChange = (event: InputChangeEvent) => {
     this.setState({
       address: event.target.value
@@ -140,7 +160,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
                 
               </Grid>
               <div>
-                <p>content2</p>
+              {this.state.content ? <div dangerouslySetInnerHTML={{ __html: this.state.content }} /> : <br />}
               </div>
             </Splitter>
           </Splitter>
