@@ -4,12 +4,14 @@ import React from "react";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { Button } from "@progress/kendo-react-buttons";
 import { Splitter, SplitterOnChangeEvent } from "@progress/kendo-react-layout";
-import { getSelectedState, Grid, GridColumn, GridSelectionChangeEvent } from "@progress/kendo-react-grid";
+import { getSelectedState ,Grid, GridColumn, GridNavigationActionEvent, GridSelectionChangeEvent } from "@progress/kendo-react-grid";
 import WebfingerService from "../../service/WebfingerService";
 import ProfileService from "../../service/ProfileService";
 import OutboxService from "../../service/OutboxService";
 import { OutboxItem } from "../../types/Common";
 import { getter } from "@progress/kendo-react-common";
+
+
 
 interface Props {
   onClose(event: WindowActionsEvent): void;
@@ -26,6 +28,7 @@ interface AppState {
   name: string | null;
   content: string|null;
   processedOutboxItems: Array<OutboxItem>;
+  outboxService: OutboxService | null;
   selectedState: {
     [id: string]: boolean | number[];
   };
@@ -43,7 +46,8 @@ class FediverseExplorer extends React.Component<Props, {}> {
     name: null,
     processedOutboxItems: [],
     selectedState: {},
-    content: null
+    content: null,
+    outboxService: null
   };
 
   onChange = (event: SplitterOnChangeEvent) => {
@@ -73,6 +77,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
       });
       if (profileService.outbox !== null && basicInfo.software !== null) {
         let outboxService = new OutboxService(profileService.outbox, basicInfo.software);
+        this.state.outboxService = outboxService;
         await outboxService.getOutbox();
         this.setState({
           processedOutboxItems: outboxService.processedOutboxItems
@@ -90,11 +95,43 @@ class FediverseExplorer extends React.Component<Props, {}> {
     });
     let theKey = Object.keys( selectedState)[0];
     let theValue = this.getValue(theKey);
-    console.log(theValue);
+    //console.log(theValue);
     this.setState({ 
       selectedState: selectedState,
       content: theValue?.content 
     });
+  };
+
+  onNavigationAction = (event: GridNavigationActionEvent) =>{
+    
+    let index = parseInt(event.focusElement.parentElement.getAttribute('data-grid-row-index'));
+    if(index >= 0){
+      let item = this.state.processedOutboxItems[index];
+      let id = item.id;
+      let selectedState:any = {};
+      selectedState[id]=true;
+      let theValue = this.getValue(id);
+      this.setState({
+        selectedState,
+        content: theValue?.content 
+      });
+
+      if(index === this.state.processedOutboxItems.length-1){
+        this.state.outboxService?.getOutbox();
+        this.setState({
+          processedOutboxItems: this.state.outboxService?.processedOutboxItems,
+          selectedState,
+          content: theValue?.content 
+        });
+      }
+
+    } else {
+      this.setState({
+        selectedState: {},
+        content: null
+      });
+    }
+
   };
 
   getValue = (id: string) =>{
@@ -146,6 +183,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
               onChange={this.onChangeInner}
             >
               <Grid 
+              navigatable={true}
               style={{height: this.state.gridHeight}} 
               data={this.state.processedOutboxItems.map((item) => ({
                 ...item,
@@ -154,6 +192,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
               selectable={{mode: 'single'}}
               selectedField={"selected"}
               onSelectionChange={this.onSelectionChange}
+              onNavigationAction={this.onNavigationAction}
               >
                 <GridColumn field="contentText" title="Text" />
                 <GridColumn field="published" title="Published" width="120px" />

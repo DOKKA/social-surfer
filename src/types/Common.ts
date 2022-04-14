@@ -6,4 +6,5 @@ export interface OutboxItem {
     inReplyTo: string;
     id: string;
     selected: boolean;
+    url: string;
 }

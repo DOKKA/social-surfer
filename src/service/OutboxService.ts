@@ -1,6 +1,7 @@
 import cors_fetch from "../util/CorsFetch";
 import { OutboxItem } from "../types/Common";
 import moment from "moment";
+import LicensePlate from "../util/LicensePlate";
 
 export default class OutboxService {
 
@@ -19,6 +20,11 @@ export default class OutboxService {
     this.processedOutboxItems = [];
   }
 
+   htmlDecode(input:string) {
+    var doc = new DOMParser().parseFromString(input, "text/html");
+    return doc.documentElement.textContent;
+  }
+
 
 
   async getOutbox() {
@@ -28,7 +34,7 @@ export default class OutboxService {
     } else {
       await this.getOutboxPage();
     }
-    this.processOutboxItems();
+     this.processedOutboxItems = this.processedOutboxItems.concat( this.processOutboxItems());
   }
 
   async getOutboxJSON() {
@@ -51,23 +57,27 @@ export default class OutboxService {
   }
 
 processOutboxItems(){
-  this.processedOutboxItems = this.outboxItems.map((item: any)=>{
+  return this.outboxItems.map((item: any)=>{
     if(this.software ==='friendica'){
       return {
         published: moment(item.published).fromNow(),
-        contentText: item.content.replace(/<\/?[^>]+(>|$)/g, ""),
+        //contentText: item.content.replace(/<\/?[^>]+(>|$)/g, ""),
+        contentText: this.htmlDecode(item.content),
         content: item.content,
         inReplyTo: item.inReplyTo,
-        id: item.id
+        id: LicensePlate(),
+        url: item.id
       }
     } else {
       let content = item.object.content || '';
       return {
         published: moment(item.published).fromNow(),
-        contentText: content.replace(/<\/?[^>]+(>|$)/g, ""),
+        //contentText: content.replace(/<\/?[^>]+(>|$)/g, ""),
+        contentText: this.htmlDecode(content),
         content: content,
         inReplyTo: item.object.inReplyTo,
-        id: item.object.id || item.object
+        id: LicensePlate(),
+        url: item.object.id || item.object
       }
     }
   }).filter((item:OutboxItem)=>{    
