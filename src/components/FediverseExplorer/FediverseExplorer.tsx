@@ -102,7 +102,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
     });
   };
 
-  onNavigationAction = (event: GridNavigationActionEvent) =>{
+  onNavigationAction = async (event: GridNavigationActionEvent) =>{
     
     let index = parseInt(event.focusElement.parentElement.getAttribute('data-grid-row-index'));
     if(index >= 0){
@@ -117,7 +117,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
       });
 
       if(index === this.state.processedOutboxItems.length-1){
-        this.state.outboxService?.getOutbox();
+        await this.state.outboxService?.getOutbox();
         this.setState({
           processedOutboxItems: this.state.outboxService?.processedOutboxItems,
           selectedState,

@@ -47,7 +47,7 @@ export default class OutboxService {
   }
 
   async getOutboxPage() {
-    if (this.currentOutboxPage !== null) {
+    if (this.currentOutboxPage !== null && this.currentOutboxPage !== undefined) {
       let json = await cors_fetch(this.currentOutboxPage, {
         Accept: "application/activity+json",
       });
@@ -61,7 +61,6 @@ processOutboxItems(){
     if(this.software ==='friendica'){
       return {
         published: moment(item.published).fromNow(),
-        //contentText: item.content.replace(/<\/?[^>]+(>|$)/g, ""),
         contentText: this.htmlDecode(item.content),
         content: item.content,
         inReplyTo: item.inReplyTo,
@@ -72,7 +71,6 @@ processOutboxItems(){
       let content = item.object.content || '';
       return {
         published: moment(item.published).fromNow(),
-        //contentText: content.replace(/<\/?[^>]+(>|$)/g, ""),
         contentText: this.htmlDecode(content),
         content: content,
         inReplyTo: item.object.inReplyTo,
