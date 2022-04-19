@@ -22,6 +22,7 @@ interface AppState {
   profileLink: string;
   panes: Array<any>;
   innerPanes: Array<any>;
+  contentPantes: Array<any>;
   gridHeight: string;
   profileImage: string | null;
   summary: string | null;
@@ -40,6 +41,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
     profileLink: '',
     panes: [{ size: "20%", collapsible: true }, {}],
     innerPanes: [{}, {}],
+    contentPantes: [{},{ size: "20%", collapsible: true }],
     gridHeight: '321px',
     profileImage: null,
     summary: null,
@@ -60,6 +62,12 @@ class FediverseExplorer extends React.Component<Props, {}> {
     this.setState({
       innerPanes: event.newState,
       gridHeight: event.newState[0].size
+    });
+  };
+
+  onChangeContent = (event: SplitterOnChangeEvent) => {
+    this.setState({
+      contentPantes: event.newState
     });
   };
 
@@ -198,9 +206,19 @@ class FediverseExplorer extends React.Component<Props, {}> {
                 <GridColumn field="published" title="Published" width="120px" />
                 
               </Grid>
+              <Splitter
+              panes={this.state.contentPantes}
+              orientation={"horizontal"}
+              onChange={this.onChangeContent}
+            >
               <div>
               {this.state.content ? <div dangerouslySetInnerHTML={{ __html: this.state.content }} /> : <br />}
               </div>
+              
+              <div>
+
+              </div>
+             </Splitter> 
             </Splitter>
           </Splitter>
         </div>
