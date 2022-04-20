@@ -5,6 +5,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import Windowtest from "./components/WindowTest";
 import LicensePlate from "./util/LicensePlate";
 import FediverseExplorer from "./components/FediverseExplorer/FediverseExplorer";
+import RecentContacts from "./components/RecentContacts/RecentContacts";
 
 type Window = {
   windowType: string;
@@ -26,6 +27,10 @@ class App extends React.Component {
         return (
           <FediverseExplorer key={win.id} onClose={() => this.closeWindow(win.id)} />
         );
+      } else if(win.windowType === "recent-contacts") {
+        return (
+          <RecentContacts key={win.id} onClose={() => this.closeWindow(win.id)} />
+        );
       } else {
         return (
           <Windowtest key={win.id} onClose={() => this.closeWindow(win.id)} />
@@ -43,6 +48,7 @@ class App extends React.Component {
           </MenuItem>
           <MenuItem text="Window Test" data="window-test" />
           <MenuItem text="Fediverse Explorer" data="fediverse-explorer" />
+          <MenuItem text="Recent Contacts" data="recent-contacts" />
         </Menu>
         <div className="main">{asdf}</div>
         <footer style={{ textAlign: "center" }}>
@@ -53,7 +59,7 @@ class App extends React.Component {
   }
 
   handleSelect = (e: MenuSelectEvent) => {
-    if (e.item.data === "window-test" || e.item.data === "fediverse-explorer") {
+    if (e.item.data === "window-test" || e.item.data === "fediverse-explorer"|| e.item.data === "recent-contacts") {
       this.openWindow(e.item.data);
     }
   };

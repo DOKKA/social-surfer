@@ -8,3 +8,8 @@ export interface OutboxItem {
     selected: boolean;
     url: string;
 }
+
+export interface Contact {
+    name: string;
+    address: string;
+}
