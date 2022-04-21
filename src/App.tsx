@@ -10,6 +10,7 @@ import RecentContacts from "./components/RecentContacts/RecentContacts";
 type Window = {
   windowType: string;
   id: string;
+  address?: string;
 };
 
 type MyState = {
@@ -25,11 +26,11 @@ class App extends React.Component {
     let asdf = this.state.windows.map((win) => {
       if (win.windowType === "fediverse-explorer") {
         return (
-          <FediverseExplorer key={win.id} onClose={() => this.closeWindow(win.id)} />
+          <FediverseExplorer key={win.id} onClose={() => this.closeWindow(win.id)} address={win.address} />
         );
       } else if(win.windowType === "recent-contacts") {
         return (
-          <RecentContacts key={win.id} onClose={() => this.closeWindow(win.id)} />
+          <RecentContacts key={win.id} onClose={() => this.closeWindow(win.id)} openFediverseExplorer={this.openFediverseExplorer} />
         );
       } else {
         return (
@@ -78,6 +79,15 @@ class App extends React.Component {
       windows: windows,
     }));
   };
+
+  openFediverseExplorer = (address: string)=>{
+    this.setState((state) => ({
+      windows: [
+        ...this.state.windows,
+        { id: LicensePlate(), windowType: 'fediverse-explorer', address: address },
+      ],
+    }));
+  }
 
   openWindow = (windowType: string) => {
     // like this

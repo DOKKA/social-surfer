@@ -15,6 +15,7 @@ import { getter } from "@progress/kendo-react-common";
 
 interface Props {
   onClose(event: WindowActionsEvent): void;
+  address?:string;
 }
 
 interface AppState {
@@ -37,7 +38,7 @@ interface AppState {
 const idGetter = getter('id');
 class FediverseExplorer extends React.Component<Props, {}> {
   state: AppState = {
-    address: 'kevin@friendgroup.social',
+    address: this.props.address ?? '',
     profileLink: '',
     panes: [{ size: "20%", collapsible: true }, {}],
     innerPanes: [{}, {}],
@@ -157,6 +158,12 @@ class FediverseExplorer extends React.Component<Props, {}> {
     this.setState({
       address: event.target.value
     });
+  }
+
+  componentDidMount(){
+    if(this.state.address.length > 0){
+      this.onSearch();
+    }
   }
 
   render() {
