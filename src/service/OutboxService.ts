@@ -34,7 +34,7 @@ export default class OutboxService {
     } else {
       await this.getOutboxPage();
     }
-     this.processedOutboxItems = this.processedOutboxItems.concat( this.processOutboxItems());
+     this.processedOutboxItems = this.processedOutboxItems.concat( await this.processOutboxItems());
   }
 
   async getOutboxJSON() {
@@ -56,32 +56,62 @@ export default class OutboxService {
     }
   }
 
-processOutboxItems(){
-  return this.outboxItems.map((item: any)=>{
-    if(this.software ==='friendica'){
-      return {
-        published: moment(item.published).fromNow(),
-        contentText: this.htmlDecode(item.content),
-        content: item.content,
-        inReplyTo: item.inReplyTo,
-        id: LicensePlate(),
-        url: item.id
-      }
-    } else {
-      let content = item.object.content || '';
-      return {
-        published: moment(item.published).fromNow(),
-        contentText: this.htmlDecode(content),
-        content: content,
-        inReplyTo: item.object.inReplyTo,
-        id: LicensePlate(),
-        url: item.object.id || item.object
+
+  async processOutboxItems(): Promise<Array<OutboxItem>> {
+    let list = [];
+    for(let x = 0; x<this.outboxItems.length; x++){
+      let item = this.outboxItems[x];
+      if(this.software === 'friendica'){
+        list.push({
+          published: moment(item.published).fromNow(),
+          contentText: this.htmlDecode(item.content)??'',
+          content: item.content,
+          inReplyTo: item.inReplyTo,
+          selected: false,
+          id: LicensePlate(),
+          url: item.id
+        });
+      } else {
+        if(typeof item.object === 'string' ){
+          try{
+            let json = await cors_fetch(item.object,{
+              Accept: "application/activity+json",
+            })
+            let content = json.content || '';
+            list.push({
+              published: moment(json.published).fromNow(),
+              contentText: 'BOOST: '+this.htmlDecode(content) ?? '',
+              content: content,
+              //boosts cant be replies
+              inReplyTo: null,
+              id: LicensePlate(),
+              url: json.id,
+              selected: false,
+            });
+          } catch(e){
+            console.error(e);
+          }
+
+
+        } else{
+          let content = item.object.content || '';
+          list.push({
+            published: moment(item.published).fromNow(),
+            contentText: this.htmlDecode(content) ?? '',
+            content: content,
+            inReplyTo: item.object.inReplyTo,
+            id: LicensePlate(),
+            url: item.object.id || item.object,
+            selected: false,
+          })
+        }
       }
     }
-  }).filter((item:OutboxItem)=>{    
-    return item.inReplyTo === null || item.inReplyTo === undefined
-  });
-
-}
+  
+    return list.filter((item)=>{    
+      return item.inReplyTo === null || item.inReplyTo === undefined
+    });
+  
+  }
 
 }
