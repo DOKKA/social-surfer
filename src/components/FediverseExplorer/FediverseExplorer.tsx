@@ -1,6 +1,6 @@
 import "./FediverseExplorer.css";
 import { Window, WindowActionsEvent } from "@progress/kendo-react-dialogs";
-import React from "react";
+import React, { RefObject } from "react";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { Button } from "@progress/kendo-react-buttons";
 import { Splitter, SplitterOnChangeEvent } from "@progress/kendo-react-layout";
@@ -23,7 +23,7 @@ interface AppState {
   profileLink: string;
   panes: Array<any>;
   innerPanes: Array<any>;
-  contentPantes: Array<any>;
+
   gridHeight: string;
   profileImage: string | null;
   summary: string | null;
@@ -35,15 +35,22 @@ interface AppState {
     [id: string]: boolean | number[];
   };
   attachments: Attachment[];
+  yyy: null|number;
 }
 const idGetter = getter('id');
 class FediverseExplorer extends React.Component<Props, {}> {
+  contentRef: React.RefObject<HTMLDivElement>;
+  
+constructor(props:Props){
+  super(props);
+  this.contentRef = React.createRef();
+}
+
   state: AppState = {
     address: this.props.address ?? '',
     profileLink: '',
     panes: [{ size: "20%", collapsible: true }, {}],
     innerPanes: [{}, {}],
-    contentPantes: [{},{ size: "20%", collapsible: true }],
     gridHeight: '321px',
     profileImage: null,
     summary: null,
@@ -53,7 +60,10 @@ class FediverseExplorer extends React.Component<Props, {}> {
     content: null,
     outboxService: null,
     attachments: [],
+    yyy:null
   };
+
+
 
   onChange = (event: SplitterOnChangeEvent) => {
     this.setState({
@@ -62,17 +72,24 @@ class FediverseExplorer extends React.Component<Props, {}> {
   };
 
   onChangeInner = (event: SplitterOnChangeEvent) => {
+    let height = this.contentRef.current?.closest('.k-window-content')?.clientHeight;
+    if(event.newState[0].size?.includes('px')){
+      let asdf = event.newState[0].size.replace('px','')
+      let zzz = parseInt(asdf);
+      if(height){
+        let aaa = height-zzz;
+        this.setState({yyy:aaa});
+      }
+      
+    }
+    console.log(height);
     this.setState({
       innerPanes: event.newState,
       gridHeight: event.newState[0].size
     });
   };
 
-  onChangeContent = (event: SplitterOnChangeEvent) => {
-    this.setState({
-      contentPantes: event.newState
-    });
-  };
+
 
   onSearch = async () => {
     let basicInfo = new WebfingerService(this.state.address);
@@ -179,6 +196,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
     });
   }
 
+
   componentDidMount(){
     if(this.state.address.length > 0){
       this.onSearch();
@@ -188,6 +206,10 @@ class FediverseExplorer extends React.Component<Props, {}> {
   render() {
 
     let title = "Fediverse Explorer";
+    let aaaaa = '20%';
+    if(this.state.yyy){
+      aaaaa = this.state.yyy-100 + 'px';
+    }
     if (this.state.name) {
       title = title + " - " + this.state.name;
     }
@@ -198,13 +220,13 @@ class FediverseExplorer extends React.Component<Props, {}> {
         if(a.mediaType.includes('image')){
           return(
             <div key={i}>
-            <img src={a.url} alt={a.name}  />
+            <img src={a.url} alt={a.name} style={{maxHeight: '50%',maxWidth:'50%'}} />
             </div>
           );
         } else if(a.mediaType.includes('video')){
           return(
             <div key={i}>
-            <video controls>
+            <video controls style={{maxHeight: '50%',maxWidth:'50%'}}>
               <source src={a.url} type={a.mediaType} />
             </video>
             </div>
@@ -234,7 +256,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
               {this.state.profileImage ? <img src={this.state.profileImage} alt={this.state.address} /> : <br />}
               {this.state.summary ? <div dangerouslySetInnerHTML={{ __html: this.state.summary }} /> : <br />}
             </div>
-            <Splitter
+            <Splitter 
               panes={this.state.innerPanes}
               orientation={"vertical"}
               onChange={this.onChangeInner}
@@ -255,22 +277,12 @@ class FediverseExplorer extends React.Component<Props, {}> {
                 <GridColumn field="published" title="Published" width="120px" />
                 
               </Grid>
-              <Splitter 
-              panes={this.state.contentPantes}
-              orientation={"horizontal"}
-              onChange={this.onChangeContent}
-            >
-              <div style={{overflowY: 'scroll',height: '90%'}}>
+              <div ref={this.contentRef}  style={{height: '100px'}}>
               {this.state.content ? <div dangerouslySetInnerHTML={{ __html: this.state.content }} /> : <br />}
               
                {renderedAttachments} 
 
               </div>
-              
-              <div>
-
-              </div>
-             </Splitter> 
             </Splitter>
           </Splitter>
         </div>
