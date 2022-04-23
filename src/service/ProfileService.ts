@@ -37,7 +37,7 @@ export default class ProfileService {
     this.following = json.following;
     this.inbox = json.inbox;
     this.outbox = json.outbox;
-    this.name = json.name || json.preferredUsername;
+    this.name = json.preferredUsername || json.name ;
   }
 
 }

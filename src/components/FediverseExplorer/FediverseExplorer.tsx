@@ -8,7 +8,7 @@ import { getSelectedState ,Grid, GridColumn, GridNavigationActionEvent, GridSele
 import WebfingerService from "../../service/WebfingerService";
 import ProfileService from "../../service/ProfileService";
 import OutboxService from "../../service/OutboxService";
-import { OutboxItem } from "../../types/Common";
+import { OutboxItem,Attachment } from "../../types/Common";
 import { getter } from "@progress/kendo-react-common";
 
 
@@ -34,6 +34,7 @@ interface AppState {
   selectedState: {
     [id: string]: boolean | number[];
   };
+  attachments: Attachment[];
 }
 const idGetter = getter('id');
 class FediverseExplorer extends React.Component<Props, {}> {
@@ -50,7 +51,8 @@ class FediverseExplorer extends React.Component<Props, {}> {
     processedOutboxItems: [],
     selectedState: {},
     content: null,
-    outboxService: null
+    outboxService: null,
+    attachments: [],
   };
 
   onChange = (event: SplitterOnChangeEvent) => {
@@ -96,7 +98,7 @@ class FediverseExplorer extends React.Component<Props, {}> {
   }
 
 
-  onSelectionChange = (event: GridSelectionChangeEvent) => {
+  onSelectionChange = async (event: GridSelectionChangeEvent) => {
     const selectedState = getSelectedState({
       event,
       selectedState: this.state.selectedState,
@@ -104,11 +106,26 @@ class FediverseExplorer extends React.Component<Props, {}> {
     });
     let theKey = Object.keys( selectedState)[0];
     let theValue = this.getValue(theKey);
-    //console.log(theValue);
+    
     this.setState({ 
       selectedState: selectedState,
-      content: theValue?.content 
+      content: theValue?.content,
+      attachments: theValue?.attachment ?? []
     });
+
+    let index = event.endRowIndex;
+
+
+    if(index === this.state.processedOutboxItems.length-1){
+      await this.state.outboxService?.getOutbox();
+      this.setState({
+        processedOutboxItems: this.state.outboxService?.processedOutboxItems,
+        selectedState,
+        content: theValue?.content,
+        attachments: theValue?.attachment ?? []
+      });
+    }
+    
   };
 
   onNavigationAction = async (event: GridNavigationActionEvent) =>{
@@ -122,7 +139,8 @@ class FediverseExplorer extends React.Component<Props, {}> {
       let theValue = this.getValue(id);
       this.setState({
         selectedState,
-        content: theValue?.content 
+        content: theValue?.content,
+        attachments: theValue?.attachment ?? []
       });
 
       if(index === this.state.processedOutboxItems.length-1){
@@ -130,7 +148,8 @@ class FediverseExplorer extends React.Component<Props, {}> {
         this.setState({
           processedOutboxItems: this.state.outboxService?.processedOutboxItems,
           selectedState,
-          content: theValue?.content 
+          content: theValue?.content,
+          attachments: theValue?.attachment ?? []
         });
       }
 
@@ -173,6 +192,29 @@ class FediverseExplorer extends React.Component<Props, {}> {
       title = title + " - " + this.state.name;
     }
 
+  
+      let arr = this.state.attachments;
+      let renderedAttachments = arr.map( (a,i)=> {
+        if(a.mediaType.includes('image')){
+          return(
+            <div key={i}>
+            <img src={a.url} alt={a.name}  />
+            </div>
+          );
+        } else if(a.mediaType.includes('video')){
+          return(
+            <div key={i}>
+            <video controls>
+              <source src={a.url} type={a.mediaType} />
+            </video>
+            </div>
+          );
+        } else {
+          return(<div key={i}></div>);
+        }
+      });
+    
+
     return (
       <Window title={title} onClose={this.props.onClose} initialHeight={768} initialWidth={1024}>
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -213,13 +255,16 @@ class FediverseExplorer extends React.Component<Props, {}> {
                 <GridColumn field="published" title="Published" width="120px" />
                 
               </Grid>
-              <Splitter
+              <Splitter 
               panes={this.state.contentPantes}
               orientation={"horizontal"}
               onChange={this.onChangeContent}
             >
-              <div>
+              <div style={{overflowY: 'scroll',height: '90%'}}>
               {this.state.content ? <div dangerouslySetInnerHTML={{ __html: this.state.content }} /> : <br />}
+              
+               {renderedAttachments} 
+
               </div>
               
               <div>

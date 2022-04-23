@@ -69,7 +69,8 @@ export default class OutboxService {
           inReplyTo: item.inReplyTo,
           selected: false,
           id: LicensePlate(),
-          url: item.id
+          url: item.id,
+          attachment: []
         });
       } else {
         if(typeof item.object === 'string' ){
@@ -87,9 +88,12 @@ export default class OutboxService {
               id: LicensePlate(),
               url: json.id,
               selected: false,
+              attachment: json.attachment,
             });
           } catch(e){
-            console.error(e);
+            //be quiet about all
+            //the errors when trying to retrieve the original toot
+            //from a boost
           }
 
 
@@ -103,6 +107,7 @@ export default class OutboxService {
             id: LicensePlate(),
             url: item.object.id || item.object,
             selected: false,
+            attachment: item.object.attachment,
           })
         }
       }
